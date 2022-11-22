@@ -87,15 +87,23 @@ void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInputsPort,
                                       int IdInput0, int IdInput1, int IdInput2, int IdInput3)
 {
+  //ok com duvidas - sem teste
+
+  if( validIdInput(IdInput0) && validIdInput(IdInput1) && validIdInput(IdInput2) && validIdInput(IdInput3) && validIdPort(IdPort)){
+         QMessageBox::critical(this, tr("Porta inválida"),  "Não foi possivel criar o circuito \nEntradas="+QString::number(NInputs)+"\nSaida="+QString::number(NOutputs)+"\nNº Portas="+QString::number(NPortas));
+         return;
+  }
   // Aqui deve ser chamado um metodo da classe Circuito que altere a porta cuja
   // id eh IdPort para que ela assuma as caracteristicas especificadas por
   // TipoPort, NumInputsPort
-  // ### falta_fazer(); ###
-
+  C.setPort(IdPort, TipoPort,NumInputsPort);
   // Aqui devem ser chamados metodos da classe Circuito que altere a porta cuja
   // id eh IdPort para que as origens de suas entradas sejam dadas pelas ids em IdInput#
   // Soh levar em conta os parametros de entrada que sejam >0
-  // ### falta_fazer(); ###
+  setId_inPort(IdPort, 0, IdInput0);
+  setId_inPort(IdPort, 1, IdInput1);
+  setId_inPort(IdPort, 2, IdInput2);
+  setId_inPort(IdPort, 3, IdInput3);
 
   // Depois de alterada, deve ser reexibida a porta correspondente e limpa a tabela verdade
   showPort(IdPort-1);
@@ -104,11 +112,15 @@ void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInput
 
 void MainCircuito::slotModificarSaida(int IdSaida, int IdOrigemSaida)
 {
+  // ok - sem teste
   // Aqui deve ser chamado um metodo da classe Circuito que altere a saida cuja
   // id eh IdSaida para que ela assuma a origem especificada por
   // IdOrigemSaida
-  // ### falta_fazer(); ###
-
+  if(validIdOrig(IdOrigemSaida)&& validIdOutput(IdSaida)){
+      QMessageBox::critical(this, tr("Saida inválida"),  "Não foi possivel criar o circuito \nEntradas="+QString::number(NInputs)+"\nSaida="+QString::number(NOutputs)+"\nNº Portas="+QString::number(NPortas));
+      return;
+  }
+  setIdOutput(IdSaida, IdOrigemSaida);
   // Depois de alterada, deve ser reexibida a saida correspondente e limpa a tabela verdade
   showOutput(IdSaida-1);
   limparTabelaVerdade();
@@ -215,17 +227,20 @@ void MainCircuito::redimensionaTabelas()
 // A funcao redimensiona_tabela jah deve chamar essa funcao para todas as portas
 void MainCircuito::showPort(unsigned i)
 {
+  // ok - sem teste
+
   // Testa se indice i eh valido, comparando com num portas consultado da classe Circuito
   // ### falta_fazer(); ###
+
   // Provisoriamente, o teste eh sempre falso
-  bool indice_valido=false;
-  if (!indice_valido) return;  // Encerra a funcao sem fazer nada
+  //bool indice_valido=false;
+  if (!validIdPort(i)) return;  // Encerra a funcao sem fazer nada
 
   // Esses valores (namePort, numInputsPort)
   // devem ser lidos a partir de metodos de consulta da classe Circuito
   // Provisoriamente, estao sendo inicializados com valores nulos ou invalidos
-  QString namePort="??";
-  int numInputsPort=0;
+  QString namePort=getNamePort(i);
+  int numInputsPort=getNumInputsPort(i);
 
   // Variaveis auxiliares
   QLabel *prov;
@@ -238,7 +253,7 @@ void MainCircuito::showPort(unsigned i)
   // Provisoriamente, estao sendo inicializados com valores nulos
   for (j=0; j<numInputsPort; j++)
   {
-    idInputPort[j] = 0;
+    idInputPort[j] = getId_inPort(i, j);
   }
 
   // Cria e define valores dos widgets da linha da tabela que corresponde aa porta
