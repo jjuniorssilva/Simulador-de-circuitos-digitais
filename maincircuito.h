@@ -6,6 +6,8 @@
 #include "newcircuito.h"
 #include "modificarporta.h"
 #include "modificarsaida.h"
+#include "circuito.h"
+
 
 /* ======================================================================== *
  * ESSA EH A CLASSE QUE REPRESENTA A TELA PRINCIPAL DO APLICATIVO           *
@@ -72,6 +74,7 @@ signals:
 private:
   Ui::MainCircuito *ui;
 
+  Circuito C;
   // Os exibidores dos valores na barra de status
   QLabel *numIn;     // Exibe o numero de entradas do circuito na barra de status
   QLabel *numOut;    // Exibe o numero de saidas do circuito na barra de status

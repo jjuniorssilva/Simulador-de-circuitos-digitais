@@ -2,6 +2,7 @@
 #include "ui_maincircuito.h"
 #include "modificarporta.h"
 #include "modificarsaida.h"
+#include "circuito.h"
 #include <QStringList>
 #include <QString>
 #include <QFileDialog>
@@ -74,11 +75,13 @@ MainCircuito::~MainCircuito()
 
 void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 {
-  // O circuito deve ser criado usando a funcao apropriada da classe Circuito
-  // ### falta_fazer(); ###
-
-  // Depois do novo circuito criado, as tabelas devem ser redimensionadas
-  redimensionaTabelas();
+    //ok
+    if(NInputs<=0 || NOutputs<=0 || NPortas<=0){
+         QMessageBox::critical(this, tr("Circuito inválido"),  "Não foi possivel criar o circuito \nEntradas="+QString::number(NInputs)+"\nSaida="+QString::number(NOutputs)+"\nNº Portas="+QString::number(NPortas));
+         return;
+    }
+    C.digitar(NInputs, NOutputs, NPortas);
+    redimensionaTabelas();
 }
 
 void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInputsPort,
@@ -115,12 +118,10 @@ void MainCircuito::slotModificarSaida(int IdSaida, int IdOrigemSaida)
 // Essa funcao deve ser chamada sempre que mudar o circuito (criar novo ou ler de arquivo)
 void MainCircuito::redimensionaTabelas()
 {
-  // Esses numeros devem ser inicializados a partir de metodos de consulta da classe Circuito
-  // ### falta_fazer(); ###
-  // Provisoriamente, estao sendo inicializados com valores nulos
-  int numInputs=0;
-  int numOutputs=0;
-  int numPorts=0;
+  //ok
+  int numInputs=C.getNumInputs();
+  int numOutputs=C.getNumOutputs();
+  int numPorts=C.getNumPorts();
 
   // Variaveis auxiliares
   QString texto;
