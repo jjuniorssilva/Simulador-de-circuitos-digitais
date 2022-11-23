@@ -51,6 +51,9 @@ Circuito::Circuito(){}
 Circuito::~Circuito(){}
 //falta_fazer();
 
+std::ostream& operator<<(std::ostream& O, const Circuito& C){
+
+}
 /// ***********************
 /// Funcoes de testagem
 /// ***********************
@@ -58,19 +61,19 @@ Circuito::~Circuito(){}
 // Retorna true se IdInput eh uma id de entrada do circuito valida (entre -1 e -NInput)
 bool Circuito::validIdInput(int IdInput) const
 {
-  //return (IdInput<=-1 && IdInput>=-getNumInputs());
+  return (IdInput<=-1 && IdInput>=-getNumInputs());
 }
 
 // Retorna true se IdOutput eh uma id de saida do circuito valida (entre 1 e NOutput)
 bool Circuito::validIdOutput(int IdOutput) const
 {
-  //return (IdOutput>=1 && IdOutput<=getNumOutputs());
+  return (IdOutput>=1 && IdOutput<=getNumOutputs());
 }
 
 // Retorna true se IdPort eh uma id de porta do circuito valida (entre 1 e NPort)
 bool Circuito::validIdPort(int IdPort) const
 {
-  //return (IdPort>=1 && IdPort<=getNumPorts());
+  return (IdPort>=1 && IdPort<=getNumPorts());
 }
 
 // Retorna true se IdOrig eh uma id valida para a origem do sinal de uma entrada de porta ou
@@ -78,7 +81,7 @@ bool Circuito::validIdPort(int IdPort) const
 // validIdOrig == validIdInput OR validIdPort
 bool Circuito::validIdOrig(int IdOrig) const
 {
-  //return validIdInput(IdOrig) || validIdPort(IdOrig);
+  return validIdInput(IdOrig) || validIdPort(IdOrig);
 }
 
 // Retorna true se IdPort eh uma id de porta valida (validIdPort) e
@@ -130,33 +133,68 @@ bool Circuito::valid() const
 
 
 int Circuito::getNumInputs() const{
-    return 2;
+    return 0;
 }
 int Circuito::getNumOutputs() const{
-    return 2;
+    return 0;
 }
 int Circuito::getNumPorts() const{
-    return 2;
+    return 0;
+}
+int Circuito::getIdOutput(int IdOutput) const{
+    return 0;
 }
 
+bool3S Circuito::getOutput(int IdOutput) const{
+    return bool3S::TRUE;
+}
+int Circuito::getNumInputsPort(int IdPort) const{
+    return 0;
+}
 
+int Circuito::getId_inPort(int IdPort, int I) const{
+  return 0;
+}
+std::string Circuito::getNamePort(int IdPort) const{
+    return "??";
+}
 /// ***********************
 /// Funcoes de modificacao
 /// ***********************
+void Circuito::setIdOutput(int IdOut, int IdOrig){
 
-//falta_fazer();
+}
+void Circuito::setPort(int IdPort, std::string Tipo, int NIn){
+
+}
+void Circuito::setId_inPort(int IdPort, int I, int IdOrig) const{
+
+}
+
 
 /// ***********************
 /// E/S de dados
 /// ***********************
 
-void Circuito::digitar(const int Inputs, const int Outputs, const int Portas){
+void Circuito::digitar(int NInputs, int NOutputs, int NPortas){
 
 }
+bool Circuito::ler(const std::string& arq){
+    return false;
+}
+//std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const{
+
+//}
+bool Circuito::salvar(const std::string& arq) const{
+    return true;
+}
+
 
 /// ***********************
 /// SIMULACAO (funcao principal do circuito)
 /// ***********************
 
-//falta_fazer();
+bool Circuito::simular(const std::vector<bool3S>& in_circ){
+     return false;
+}
 
