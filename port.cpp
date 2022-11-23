@@ -1,20 +1,6 @@
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*ALUNOS: FRANCISCO PAIVA NETO;
-          GABRIEL SOUTO LOZANO BARBOSA*/
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <cmath>
-#include <limits>
-
 #include <fstream>
 #include "port.h"
 
-using namespace std;
 //
 // CLASSE PORT
 //
@@ -106,7 +92,7 @@ int Port::getId_in(unsigned I) const
 
 // Fixa o numero de entradas da porta
 // Depois de testar o parametro (validNumInputs), se o novo numero de entradas for igual ao
-// anterior nï¿½o faz nada; caso seja diferente, redimensiona e inicializa os elementos do
+// anterior não faz nada; caso seja diferente, redimensiona e inicializa os elementos do
 // array id_in com valor invalido (0)
 void Port::setNumInputs(unsigned NI)
 {
@@ -171,7 +157,7 @@ void Port::digitar()
 // Leh uma porta da stream ArqI. Deve fixar o valor:
 // - do numero de entradas da porta; e
 // - da id de cada uma das portas
-// Retorna true se tudo OK (usa valid), false se houve erro
+// Retorna true se tudo OK, false se houve erro
 // Este metodo nao eh virtual, pois pode ser feito generico de forma a servir para
 // todas as ports.
 // Basta que o metodo teste o numero de entradas com a funcao virtual validNumInputs()
@@ -181,25 +167,27 @@ void Port::digitar()
 // apropriado para o tipo de porta.
 bool Port::ler(std::istream& ArqI)
 {
-  unsigned Nin;
-  char c;
-
-  ArqI >> Nin;
-  if (this->validNumInputs(Nin))
+  try
   {
+    unsigned Nin;
+    char c;
+
+    ArqI >> Nin;
+    if (!ArqI.good() || !validNumInputs(Nin)) throw 1;
     id_in.resize(Nin);
     ArqI >> c;
-    if (c == ':')
+    if (!ArqI.good() || c != ':') throw 2;
+    for (unsigned i=0; i<getNumInputs(); i++)
     {
-      for (unsigned i=0; i<getNumInputs(); i++)
-      {
-        ArqI >> id_in.at(i);
-      }
+      ArqI >> id_in.at(i);
+      if (!ArqI.good() || id_in.at(i) == 0) throw 3;
     }
-    else id_in.clear();
   }
-  else id_in.clear();
-  if (!valid()) return false;
+  catch (int erro)
+  {
+    id_in.clear();
+    return false;
+  }
   return true;
 }
 
@@ -236,245 +224,196 @@ std::ostream& operator<<(std::ostream& O, const Port& X)
 /// AS OUTRAS PORTS
 ///
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//                        NOT
-///C DEFAULT
-Port_NOT::Port_NOT():Port(1) {}
-
-/// C COPIA
+/////////////// PORTA NOT ///////////////
+Port_NOT::Port_NOT():Port(1)
+{
+}
 ptr_Port Port_NOT::clone()const
 {
-
     return new Port_NOT(*this);
 }
-
-///Retornar nome da porta
-string Port_NOT::getName()const
+std::string Port_NOT::getName()const
 {
-
     return "NT";
 }
-
-/// Valida o numero de entrada na porta
 bool Port_NOT::validNumInputs(unsigned NI)const
 {
-
     return (NI==1);
 }
-
-/// Digitar sobreescrito na porta
 void Port_NOT::digitar()
 {
-
-    Nin = 1;
-    do{
-
-        cout << "Digite a entrada na porta NOT: ";
-        cin >> id_in[0];
-    }while( !valid());
+    do
+    {
+        std::cout << "Digite a entrada da porta NOT: ";
+        std::cin >> id_in[0];
+    }while(!valid());
 }
-
-/// Simular comportamento da porta
-bool3S Port_NOT::simular(const bool3S In[])
+void Port_NOT::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res =~ In[0];
-    return res;
+    if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port =~ in_port[0];
 }
-
-//                          PORTA AND
-/// C DEFAULT
-Port_AND::Port_AND():Port() {}
-
-/// C Copia
+/////////////// PORTA AND ///////////////
+Port_AND::Port_AND():Port()
+{
+}
 ptr_Port Port_AND::clone()const
 {
-
     return new Port_AND(*this);
 }
-
-/// Retorna nome
-string Port_AND::getName()const
+std::string Port_AND::getName()const
 {
-
     return "AN";
 }
-
-/// Simular comportamento da porta
-bool3S Port_AND::simular(const bool3S In[])
+void Port_AND::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res = In[0];
-    for (unsigned i = 0; i < Nin; i++)
+    if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port = in_port[0];
+    for (unsigned i = 1; i < getNumInputs()-1; i++)
     {
 
-        res &= In[i];
+        out_port &= in_port[i];
     }
-
-    return res;
 }
-
-//                          PORTA NAND
-/// C DEFAULT
-Port_NAND::Port_NAND():Port() {}
-
-/// C COPIA
+/////////////// PORTA NAND ///////////////
+Port_NAND::Port_NAND():Port()
+{
+}
 ptr_Port Port_NAND::clone()const
 {
-
     return new Port_NAND(*this);
 }
-
-/// Retorna nome da porta
-string Port_NAND::getName()const
+std::string Port_NAND::getName()const
 {
-
     return "NA";
 }
-
-/// Simular comportamento da porta
-bool3S Port_NAND::simular(const bool3S In[])
+void Port_NAND::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res = In[0];
-    for (unsigned i = 1; i < Nin; i++)
+    if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port = in_port[0];
+    for (unsigned i = 1; i < getNumInputs()-1; i++)
     {
 
-        res &= In[i];
+        out_port &= in_port[i];
     }
-
-    res =~ res;
-    return (res);
+    out_port =~ out_port;
 }
-
-//                             PORTA OR
-/// C DEFAULT
-Port_OR::Port_OR():Port() {}
-
-/// C COPIA
+/////////////// PORTA OR ///////////////
+Port_OR::Port_OR():Port()
+{
+}
 ptr_Port Port_OR::clone()const
 {
-
     return new Port_OR(*this);
 }
-
-/// RETORNAR NOME DA PORTA
-string Port_OR::getName()const
+std::string Port_OR::getName()const
 {
-
     return "OR";
 }
-
-///SIMULAR O COMPORTAMENTO DA PORTA
-bool3S Port_OR::simular(const bool3S In[])
+void Port_OR::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res = In[0];
-    for ( unsigned i = 1; i < Nin; i++)
+     if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port = in_port[0];
+    for (unsigned i = 1; i < getNumInputs()-1; i++)
     {
 
-        res |= In[i];
+        out_port |= in_port[i];
     }
-
-    return res;
 }
-
-//                          PORTA NOR
-///  C DEFAULT
-Port_NOR::Port_NOR():Port() {}
-
-/// C COPIA
+/////////////// PORTA NOR ///////////////
+Port_NOR::Port_NOR():Port()
+{
+}
 ptr_Port Port_NOR::clone()const
 {
-
     return new Port_NOR(*this);
 }
-
-/// RETORNAR NOME DA PORTA
-string Port_NOR::getName()const
+std::string Port_NOR::getName()const
 {
-
     return "NO";
 }
-
-/// SIMULAR COMPORTAMENTO DA PORTA
-bool3S Port_NOR::simular(const bool3S In[])
+void Port_NOR::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res = In[];
-    for ( unsigned i = 1; i < Nin; i++)
+     if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port = in_port[0];
+    for (unsigned i = 1; i < getNumInputs()-1; i++)
     {
 
-        res |= In[i];
+        out_port |= in_port[i];
     }
-
-    res = ~ res;
-    return res;
+    out_port =~ out_port;
 }
-
-//                   PORTA XOR
-/// C DEFAULT
-Port_XOR::Port_XOR():Port() {}
-
-/// C COPIA
+/////////////// PORTA XOR ///////////////
+Port_XOR::Port_XOR():Port()
+{
+}
 ptr_Port Port_XOR::clone()const
 {
-
     return new Port_XOR(*this);
 }
-
-/// RETORNAR NOME DA PORTA
-string Port_XOR::getName()const
+std::string Port_XOR::getName()const
 {
-
     return "XO";
 }
-
-/// SIMULAR COMPORTAMENTO DA PORTA
-bool3S Port_XOR::simular(const bool3S In[])
+void Port_XOR::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res = In[1];
-    for (unsigned i = 1; i < Nin; i++)
+     if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port = in_port[0];
+    for (unsigned i = 1; i < getNumInputs()-1; i++)
     {
 
-        res ^= In[i];
+        out_port ^= in_port[i];
     }
-
-    return res;
+    out_port =~ out_port;
 }
-
-//                        PORTA NOTXOR
-/// C DEFAULT
-Port_NXOR::Port_NXOR():Port() {}
-
-/// C COPIA
+/////////////// PORTA NXOR ///////////////
+Port_NXOR::Port_NXOR():Port()
+{
+}
 ptr_Port Port_NXOR::clone()const
 {
-
     return new Port_NXOR(*this);
 }
-
-/// RETORNAR NOME DA PORTA
-string Port_NXOR::getName()const
+std::string Port_NXOR::getName()const
 {
-
     return "NX";
 }
-
-/// SIMULAR O COMPORTAMENTO DA PORTA
-bool3S Port_NXOR::simular(const bool3S In[])
+void Port_NXOR::simular(const std::vector<bool3S>& in_port)
 {
-
-    bool3S res = In[1];
-    for (unsigned i = 1; i < Nin; i++)
+     if(in_port.size() != getNumInputs())
+    {
+        out_port = bool3S::UNDEF;
+        return;
+    }
+    out_port = in_port[0];
+    for (unsigned i = 1; i < getNumInputs()-1; i++)
     {
 
-        res ^= In[i];
+        out_port ^= in_port[i];
     }
-
-    res =~ res;
-    return res;
+    out_port =~ out_port;
 }
