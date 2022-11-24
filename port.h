@@ -39,11 +39,8 @@ public:
   /// ***********************
   /// Inicializacao e finalizacao
   /// ***********************
-
-  // Construtor (recebe como parametro o numero de entradas da porta)
-  // Testa o parametro (validNumInputs), dimensiona e inicializa os elementos
-  // do array id_in com valor invalido (0), inicializa out_port com UNDEF
   Port(int NI=2);
+  Port(const Port& P);
   // Destrutor virtual
   virtual ~Port();
 

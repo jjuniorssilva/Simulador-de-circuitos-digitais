@@ -230,7 +230,7 @@ public:
   // Saida dos dados de um circuito (em tela ou arquivo, a mesma funcao serve para os dois)
   // Imprime os cabecalhos e os dados do circuito, caso o circuito seja valido
   // Deve utilizar os metodos de impressao da classe Port
-  std::ostream& imprimir(std::ostream& O=std::cout) const;
+  std::ostream& imprimir(std::ostream& arq) const;
 
   // Salvar circuito em arquivo, caso o circuito seja valido
   // Abre a stream, chama o metodo imprimir e depois fecha a stream
