@@ -89,6 +89,7 @@ void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInputsPort,
                                       int IdInput0, int IdInput1, int IdInput2, int IdInput3)
 {
+    QMessageBox::critical(this, tr(""), QString::number(IdPort));
     try{
          if(NumInputsPort >0 && !(C.validIdInput(IdInput0))) throw IdInput2;
          if(NumInputsPort >1 && !(C.validIdInput(IdInput1))) throw 2;
@@ -404,13 +405,6 @@ void MainCircuito::on_actionGerar_tabela_triggered()
     return;
   }
 
-  //
-  // Cria e inicializa o vetor de entradas do circuito
-  //
-
-  // Esses valores (numInputs, numOutputs)
-  // devem ser lidos a partir de metodos de consulta da classe Circuito
-
   int numInputs=C.getNumInputs();
   int numOutputs=C.getNumOutputs();
   // Calcula o numero de combinacoes de entrada
@@ -463,7 +457,7 @@ void MainCircuito::on_actionGerar_tabela_triggered()
     for (j=0; j<numOutputs; j++)
     {
       // A saida deve ser obtida com um metodo de consulta da classe Circuito
-      bool3S output = C.getOutput(j);
+      bool3S output = C.getOutput(j+1);
       prov = new QLabel( QString( toChar(output) ) );
       prov->setAlignment(Qt::AlignCenter);
       ui->tableTabelaVerdade->setCellWidget(i+1, j+numInputs, prov);
