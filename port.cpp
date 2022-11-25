@@ -12,7 +12,7 @@
 // Construtor (recebe como parametro o numero de entradas da porta)
 // Dimensiona o array id_in e inicializa elementos com valor invalido (0),
 // inicializa out_port com UNDEF
-Port::Port(int NI):id_in(NI,0),out_port(bool3S::UNDEF)
+Port::Port(unsigned NI):id_in(NI,0),out_port(bool3S::UNDEF)
 {
   // Nao pode testar o parametro NI com validNumInputs pq o construtor de
   // Port eh chamado pelo construtor de Port_NOT, mas sem que ocorra
@@ -41,13 +41,13 @@ Port::~Port() {}
 
 // Retorna true se um numero de entradas eh possivel para a porta, ou seja, se NI >= 2
 // (na funcao correspondente na porta NOT, substituir por NI==1)
-bool Port::validNumInputs(int NI) const
+bool Port::validNumInputs(unsigned NI) const
 {
   return (NI>=2);
 }
 
 // Retorna true se um indice (qual entrada da porta) eh valido (entre 0 e NumInputs-1)
-bool Port::validIndex(int I) const
+bool Port::validIndex(unsigned I) const
 {
   return (/*I>=0 && */I<getNumInputs());
 }
@@ -67,7 +67,7 @@ bool Port::valid() const
 /// ***********************
 
 // Caracteristicas da porta
-int Port::getNumInputs() const
+unsigned Port::getNumInputs() const
 {
   return id_in.size();
 }
@@ -80,7 +80,7 @@ bool3S Port::getOutput() const
 
 // Depois de testar o parametro (validIndex), retorna o valor de id_in[I]
 // ou 0 se indice invalido
-int Port::getId_in(int I) const
+int Port::getId_in(unsigned I) const
 {
   if (!validIndex(I)) return 0;
   return id_in.at(I);
@@ -94,7 +94,7 @@ int Port::getId_in(int I) const
 // Depois de testar o parametro (validNumInputs), se o novo numero de entradas for igual ao
 // anterior não faz nada; caso seja diferente, redimensiona e inicializa os elementos do
 // array id_in com valor invalido (0)
-void Port::setNumInputs(int NI)
+void Port::setNumInputs(unsigned NI)
 {
   if (validNumInputs(NI) && NI!=getNumInputs())
   {
@@ -111,7 +111,7 @@ void Port::setOutput(bool3S S)
 
 // Fixa a origem do sinal da I-esima entrada da porta como sendo Id
 // Depois de testar os parametros (validIndex, Id!=0), faz: id_in[I] <- Id
-void Port::setId_in(int I, int Id)
+void Port::setId_in(unsigned I, int Id)
 {
   if (validIndex(I) && Id!=0) id_in.at(I) = Id;
 }
@@ -236,7 +236,7 @@ std::string Port_NOT::getName()const
 {
     return "NT";
 }
-bool Port_NOT::validNumInputs(int NI)const
+bool Port_NOT::validNumInputs(unsigned NI)const
 {
     return (NI==1);
 }
@@ -277,7 +277,7 @@ void Port_AND::simular(const std::vector<bool3S>& in_port)
         return;
     }
     out_port = in_port[0];
-    for (unsigned i = 1; i < getNumInputs()-1; i++)
+    for (unsigned i = 1; i < getNumInputs(); i++)
     {
 
         out_port &= in_port[i];
@@ -303,7 +303,7 @@ void Port_NAND::simular(const std::vector<bool3S>& in_port)
         return;
     }
     out_port = in_port[0];
-    for (unsigned i = 1; i < getNumInputs()-1; i++)
+    for (unsigned i = 1; i < getNumInputs(); i++)
     {
 
         out_port &= in_port[i];
@@ -330,7 +330,7 @@ void Port_OR::simular(const std::vector<bool3S>& in_port)
         return;
     }
     out_port = in_port[0];
-    for (unsigned i = 1; i < getNumInputs()-1; i++)
+    for (unsigned i = 1; i < getNumInputs(); i++)
     {
 
         out_port |= in_port[i];
@@ -356,7 +356,7 @@ void Port_NOR::simular(const std::vector<bool3S>& in_port)
         return;
     }
     out_port = in_port[0];
-    for (unsigned i = 1; i < getNumInputs()-1; i++)
+    for (unsigned i = 1; i < getNumInputs(); i++)
     {
 
         out_port |= in_port[i];
@@ -383,12 +383,11 @@ void Port_XOR::simular(const std::vector<bool3S>& in_port)
         return;
     }
     out_port = in_port[0];
-    for (unsigned i = 1; i < getNumInputs()-1; i++)
+    for (unsigned i = 1; i < getNumInputs(); i++)
     {
 
         out_port ^= in_port[i];
     }
-    out_port =~ out_port;
 }
 /////////////// PORTA NXOR ///////////////
 Port_NXOR::Port_NXOR():Port()
@@ -410,7 +409,7 @@ void Port_NXOR::simular(const std::vector<bool3S>& in_port)
         return;
     }
     out_port = in_port[0];
-    for (unsigned i = 1; i < getNumInputs()-1; i++)
+    for (unsigned i = 1; i < getNumInputs(); i++)
     {
 
         out_port ^= in_port[i];
