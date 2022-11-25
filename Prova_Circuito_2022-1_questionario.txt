@@ -1,0 +1,29 @@
+Prova Circuito 22.1 - Questionário   
+
+Alun@: _______________________________________________
+(em caso de dupla, informar os dados de ambos os alunos)
+
+Este questionário preenchido deverá ser enviado pelo SIGAA, com o resultado da execução do seu programa para cada uma das questões da prova.
+
+1. Questão 1 - Tabela verdade
+Digite o circuito cujo diagrama esquemático está na prova, utilizando a interface do seu aplicativo, e gere a tabela verdade correspondente. Confira com a tabela verdade informada na prova.
+( ) 100% da tabela verdade correta
+( ) 80% ou mais da tabela verdade correta
+( ) Menos de 80% da tabela verdade correta
+( ) Não conseguiu digitar o circuito
+( ) Erro de execução
+
+2. Questão 2 - Salvamento de arquivo
+Salve o arquivo correspondente ao circuito da questão 1, utilizando o seu aplicativo. Confira com o texto da prova.
+( ) 100% do arquivo correto
+( ) Qualquer erro no arquivo
+( ) Não conseguiu salvar o arquivo
+( ) Erro na execução
+
+3. Questão 3 - Leitura e simulação de arquivo
+Digite em editor de textos e salve ou baixe do SIGAA o arquivo da prova. Em seguida, carregue esse arquivo com seu aplicativo e gere a tabela verdade. Confira com a resposta indicada na prova.
+( ) 100% da tabela verdade correta
+( ) 80% ou mais da tabela verdade correta
+( ) Menos de 80% da tabela verdade correta
+( ) Não conseguiu ler o arquivo
+( ) Erro de execução
