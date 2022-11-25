@@ -112,7 +112,8 @@ void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInput
   C.setId_inPort(IdPort, 3, IdInput3);
 
   // Depois de alterada, deve ser reexibida a porta correspondente e limpa a tabela verdade
-  showPort(IdPort-1);
+
+  showPort(IdPort);
   limparTabelaVerdade();
 }
 
@@ -127,7 +128,7 @@ void MainCircuito::slotModificarSaida(int IdSaida, int IdOrigemSaida)
   }
   C.setIdOutput(IdSaida, IdOrigemSaida);
   // Depois de alterada, deve ser reexibida a saida correspondente e limpa a tabela verdade
-  showOutput(IdSaida-1);
+  showOutput(IdSaida);
   limparTabelaVerdade();
 }
 
@@ -135,7 +136,6 @@ void MainCircuito::slotModificarSaida(int IdSaida, int IdOrigemSaida)
 // Essa funcao deve ser chamada sempre que mudar o circuito (criar novo ou ler de arquivo)
 void MainCircuito::redimensionaTabelas()
 {
-  //ok
   int numInputs=C.getNumInputs();
   int numOutputs=C.getNumOutputs();
   int numPorts=C.getNumPorts();

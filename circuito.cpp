@@ -256,8 +256,10 @@ void Circuito::setIdOutput(int IdOut, int IdOrig)
 }
 void Circuito::setPort(int IdPort, std::string Tipo, unsigned NIn)
 {
-    if(!definedPort(IdPort) && !validPort(IdPort))
+
+    if(!validIdPort(IdPort) && !validIdInput(Nin) && !validType(Tipo))
     {
+        cout<<"erro";
         return;
     }
     delete ports[IdPort-1];
