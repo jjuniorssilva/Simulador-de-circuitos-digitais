@@ -79,7 +79,7 @@ void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 {
     //ok
     if(NInputs<=0 || NOutputs<=0 || NPortas<=0){
-         QMessageBox::critical(this, tr("Circuito inválido"),  "Não foi possivel criar o circuito \nEntradas="+QString::number(NInputs)+"\nSaida="+QString::number(NOutputs)+"\nNº Portas="+QString::number(NPortas));
+         QMessageBox::critical(this, tr("Circuito invalido"),  "Nao foi possivel criar o circuito \nEntradas="+QString::number(NInputs)+"\nSaida="+QString::number(NOutputs)+"\nNº Portas="+QString::number(NPortas));
          return;
     }
     C.digitar(NInputs, NOutputs, NPortas);
@@ -89,7 +89,6 @@ void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInputsPort,
                                       int IdInput0, int IdInput1, int IdInput2, int IdInput3)
 {
-    QMessageBox::critical(this, tr(""), QString::number(IdPort));
     try{
          if(NumInputsPort >0 && !(C.validIdInput(IdInput0))) throw IdInput2;
          if(NumInputsPort >1 && !(C.validIdInput(IdInput1))) throw 2;
