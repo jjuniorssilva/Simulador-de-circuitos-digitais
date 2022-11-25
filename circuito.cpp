@@ -145,7 +145,7 @@ bool Circuito::validPort(int IdPort) const
     {
         if (!validIdOrig(getId_inPort(IdPort,j))) return false;
     }
-
+    return true;
 }
 
 // Retorna true se o circuito eh valido (estah com todos os dados corretos):
@@ -224,7 +224,7 @@ unsigned Circuito::getNumInputsPort(int IdPort) const
 
 int Circuito::getId_inPort(int IdPort, unsigned I) const
 {
-    if (definedPort(IdPort) && validIdPort(I))  // && testar o indice da entrada I
+    if (definedPort(IdPort) && ports[IdPort-1] -> validIndex(I))  // && testar o indice da entrada I
     {
         return ports[IdPort - 1] -> getId_in(I);
     }
@@ -407,7 +407,7 @@ std::ostream& Circuito::imprimir(std::ostream& arq) const
 }
 bool Circuito::salvar(const std::string& arq) const
 {
-    //if(!valid()) return false;
+    if(!valid()) return false;
     ofstream arq1(arq);
     if (!arq1.is_open()) return false;
     imprimir(arq1);
