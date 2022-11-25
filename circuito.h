@@ -8,8 +8,8 @@
 #include "port.h"
 
 /// ###########################################################################
-/// ATENCAO PARA A CONVENCAO DOS NOMES PARA OS PARAMETROS DAS FUNCOES:
-/// int I: indice (de entrada de porta): de 0 a NInputs-1
+/// ATENCAO PARA A CONVENCAO DOS NOMES E TIPOS PARA OS PARAMETROS DAS FUNCOES:
+/// unsigned I: indice (de entrada de porta): de 0 a NInputs-1
 /// int Id___: identificador (de entrada, saida ou porta):
 ///            de 1 a N ou de -1 a -N (nao 0)
 /// - int IdInput: de -1 a -NumEntradasCircuito
@@ -30,7 +30,7 @@ private:
   /// ***********************
 
   // Numero de entradas do circuito
-  int Nin;
+  unsigned Nin;
 
   // Nao precisa manter variaveis para guardar o numero de saidas e ports.
   // Essas informacoes estao armazenadas nos tamanhos (size) dos vetores correspondentes:
@@ -63,31 +63,22 @@ public:
   // O vetor ports terah a mesma dimensao do equivalente no Circuit C
   // Serah necessario utilizar a funcao virtual clone para criar copias das portas
   Circuito(const Circuito& C);
-  // Construtor por movimento
-  // Nin e os vetores id_out, out_circ e ports assumirao o conteudo dos equivalentes
-  // no Circuit temporario C, que serah zerado
-  Circuito(Circuito&& C);
-
   // Destrutor: apenas chama a funcao clear()
   ~Circuito();
+
   // Limpa todo o conteudo do circuito. Faz Nin <- 0 e
   // utiliza o metodo STL clear para limpar os vetores id_out, out_circ e ports
   // ATENCAO: antes de dar um clear no vetor ports, tem que liberar (delete) as areas
   // de memoria para as quais cada ponteiro desse vetor aponta.
   void clear();
 
-  // Operador de atribuicao por copia
+  // Operador de atribuicao
   // Atribui (faz copia) de Nin e dos vetores id_out e out_circ
   // ATENCAO: antes de alterar o vetor ports, tem que liberar (delete) as areas
   // de memoria para as quais cada ponteiro desse vetor aponta.
   // O vetor ports terah a mesma dimensao do equivalente no Circuit C
   // Serah necessario utilizar a funcao virtual clone para criar copias das portas
   void operator=(const Circuito& C);
-  // Operador de atribuicao por movimento
-  // Move Nin e os vetores id_out, out_circ e ports
-  // ATENCAO: antes de mover o vetor ports, tem que liberar (delete) as areas
-  // de memoria anteriores para as quais cada ponteiro desse vetor aponta.
-  void operator=(Circuito&& C);
 
   // Redimensiona o circuito para passar a ter NI entradas, NO saidas e NP ports
   // Inicialmente checa os parametros. Caso sejam validos,
@@ -96,7 +87,7 @@ public:
   // id_out[i] <- 0
   // out_circ[i] <- UNDEF
   // ports[i] <- nullptr
-  void resize(int NI, int NO, int NP);
+  void resize(unsigned NI, unsigned NO, unsigned NP);
 
   /// ***********************
   /// Funcoes de testagem
@@ -138,11 +129,11 @@ public:
   // Caracteristicas do circuito
 
   // Retorna o numero de entradas Nin
-  int getNumInputs() const;
+  unsigned getNumInputs() const;
   // Retorna o tamanho (size) dos vetores correspondentes:
   // id_out e ports, respectivamente
-  int getNumOutputs() const;
-  int getNumPorts() const;
+  unsigned getNumOutputs() const;
+  unsigned getNumPorts() const;
 
   // Caracteristicas das saidas do circuito
 
@@ -168,13 +159,13 @@ public:
   // Depois de testar se a porta existe (definedPort),
   // retorna ports[IdPort-1]->getNumInputs()
   // ou 0 se parametro invalido
-  int getNumInputsPort(int IdPort) const;
+  unsigned getNumInputsPort(int IdPort) const;
 
   // Retorna a origem (a id) da I-esima entrada da porta cuja id eh IdPort
   // Depois de testar se a porta existe (definedPort) e o indice da entrada I,
   // retorna ports[IdPort-1]->getId_in(I)
   // ou 0 se parametro invalido
-  int getId_inPort(int IdPort, int I) const;
+  int getId_inPort(int IdPort, unsigned I) const;
 
   /// ***********************
   /// Funcoes de modificacao
@@ -194,12 +185,12 @@ public:
   // 1) Libera a antiga area de memoria: delete ports[IdPort-1]
   // 2) Cria a nova porta: ports[IdPort-1] <- new ... (de acordo com tipo)
   // 3) Fixa o numero de entrada: ports[IdPort-1]->setNumInputs(NIn)
-  void setPort(int IdPort, std::string Tipo, int NIn);
+  void setPort(int IdPort, std::string Tipo, unsigned NIn);
 
   // Altera a origem da I-esima entrada da porta cuja id eh IdPort, que passa a ser "IdOrig"
   // Depois de VARIOS testes (definedPort, validIndex, validIdOrig)
   // faz: ports[IdPort-1]->setId_in(I,Idorig)
-  void setId_inPort(int IdPort, int I, int IdOrig) const;
+  void setId_inPort(int IdPort, unsigned I, int IdOrig) const;
 
   /// ***********************
   /// E/S de dados
@@ -214,7 +205,7 @@ public:
   // Em seguida, o usuario digita as ids de todas as saidas, que sao conferidas (validIdOrig).
   // Se o usuario digitar um dado invalido, o metodo deve pedir que ele digite novamente
   // Deve utilizar o metodo digitar da classe Port
-  void digitar(int NInputs, int NOutputs, int NPortas);
+  void digitar();
 
   // Entrada dos dados de um circuito via arquivo
   // Leh do arquivo o cabecalho com o numero de entradas, saidas e portas
@@ -230,7 +221,7 @@ public:
   // Saida dos dados de um circuito (em tela ou arquivo, a mesma funcao serve para os dois)
   // Imprime os cabecalhos e os dados do circuito, caso o circuito seja valido
   // Deve utilizar os metodos de impressao da classe Port
-  std::ostream& imprimir(std::ostream& arq) const;
+  std::ostream& imprimir(std::ostream& O=std::cout) const;
 
   // Salvar circuito em arquivo, caso o circuito seja valido
   // Abre a stream, chama o metodo imprimir e depois fecha a stream

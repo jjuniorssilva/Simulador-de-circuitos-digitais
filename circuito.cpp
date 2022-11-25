@@ -52,20 +52,22 @@ ptr_Port allocPort(std::string& Tipo)
 Circuito::Circuito():id_out(),out_circ(),ports()
 {
 }
-Circuito::~Circuito(){}
-
-Circuito::Circuito(const Circuito& C){
+Circuito::~Circuito()
+{
+}
+Circuito::Circuito(const Circuito& C)
+{
 
 }
 
-Circuito::Circuito(Circuito&& C){}
+//Circuito::Circuito(Circuito&& C){}
+void Circuito::clear()
+{
 
+}
 
 //falta_fazer();
 
-std::ostream& operator<<(std::ostream& O, const Circuito& C){
-
-}
 /// ***********************
 /// Funcoes de testagem
 /// ***********************
@@ -73,7 +75,7 @@ std::ostream& operator<<(std::ostream& O, const Circuito& C){
 // Retorna true se IdInput eh uma id de entrada do circuito valida (entre -1 e -NInput)
 bool Circuito::validIdInput(int IdInput) const
 {
-  return (IdInput<=-1 && IdInput>=-getNumInputs());
+  return (IdInput<=-1 && IdInput>=-int(getNumInputs()));
 }
 
 // Retorna true se IdOutput eh uma id de saida do circuito valida (entre 1 e NOutput)
@@ -144,13 +146,13 @@ bool Circuito::valid() const
 /// ***********************
 
 
-int Circuito::getNumInputs() const{
+unsigned Circuito::getNumInputs() const{
     return out_circ.size();
 }
-int Circuito::getNumOutputs() const{
+unsigned Circuito::getNumOutputs() const{
      return id_out.size();
 }
-int Circuito::getNumPorts() const{
+unsigned Circuito::getNumPorts() const{
     return ports.size();
 }
 int Circuito::getIdOutput(int IdOutput) const{
@@ -168,7 +170,7 @@ bool3S Circuito::getOutput(int IdOutput) const{
         }
         else return bool3S::UNDEF;
 }
-int Circuito::getNumInputsPort(int IdPort) const{
+unsigned Circuito::getNumInputsPort(int IdPort) const{
     if (definedPort(IdPort))
         {
             return ports[IdPort - 1] -> getNumInputs();
@@ -176,7 +178,7 @@ int Circuito::getNumInputsPort(int IdPort) const{
         else return 0;
 }
 
-int Circuito::getId_inPort(int IdPort, int I) const{
+int Circuito::getId_inPort(int IdPort, unsigned I) const{
     {
         if (definedPort(IdPort))  // && testar o indice da entrada I
         {
@@ -195,13 +197,16 @@ std::string Circuito::getNamePort(int IdPort) const{
 /// ***********************
 /// Funcoes de modificacao
 /// ***********************
-void Circuito::setIdOutput(int IdOut, int IdOrig){
+void Circuito::setIdOutput(int IdOut, int IdOrig)
+{
 
 }
-void Circuito::setPort(int IdPort, std::string Tipo, int NIn){
+void Circuito::setPort(int IdPort, std::string Tipo, unsigned NIn)
+{
 
 }
-void Circuito::setId_inPort(int IdPort, int I, int IdOrig) const{
+void Circuito::setId_inPort(int IdPort, unsigned I, int IdOrig) const
+{
 
 }
 
@@ -210,8 +215,8 @@ void Circuito::setId_inPort(int IdPort, int I, int IdOrig) const{
 /// E/S de dados
 /// ***********************
 
-void Circuito::digitar(int NInputs, int NOutputs, int NPortas){
-
+void Circuito::digitar()
+{
 }
 bool Circuito::ler(const std::string& arq){
     ifstream I(arq.c_str());
@@ -257,11 +262,46 @@ bool Circuito::ler(const std::string& arq){
          if (I.is_open()) I.close();
          return resultado;
 }
-std::ostream& Circuito::imprimir(std::ostream& arq) const{
+std::ostream& Circuito::imprimir(std::ostream& arq) const
+{
+    //Exemplo de arquivos validos
+    //CIRCUITO 2 1 3
+    //PORTAS
+    //1) OR 2: -1 -2
+    //2) NT 1: -2
+    //3) AN 2: 1 2
+    //SAIDAS
+    //1) 3
+    arq<<"CIRCUITO"<<" "<<out_circ.size()<<" "<<id_out.size()<<" "<<ports.size()<<'\n'<<"PORTAS";
+    for (unsigned i = 0; i < ports.size(); i++)
+    {
 
+        arq<<i<<')';
+        ports[i]->imprimir(arq);
+    }
+    arq<<'\n'<<"SAIDAS";
+    for(unsigned i=0;i<id_out.size();i++)
+    {
+
+        arq<<i<<')'<<" "<<id_out[i];
+    }
+
+    return arq;
 }
-bool Circuito::salvar(const std::string& arq) const{
-    return true;
+bool Circuito::salvar(const std::string& arq) const
+{
+    if(!valid())
+    {
+        return false;
+    }
+   ofstream arq1(arq);
+    if (arq1.is_open())
+    {
+        imprimir(arq1);
+        arq1.close();
+        return true;
+    }
+    return false;
 }
 
 
