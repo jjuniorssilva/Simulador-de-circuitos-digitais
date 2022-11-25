@@ -197,17 +197,22 @@ std::string Circuito::getNamePort(int IdPort) const{
 /// ***********************
 /// Funcoes de modificacao
 /// ***********************
-void Circuito::setIdOutput(int IdOut, int IdOrig)
-{
-
+void Circuito::setIdOutput(int IdOut, int IdOrig){
+    if(validIdOutput(IdOut) && validIdOrig(IdOrig)){
+        id_out[IdOut-1] = IdOrig;
+    }
 }
-void Circuito::setPort(int IdPort, std::string Tipo, unsigned NIn)
-{
+void Circuito::setPort(int IdPort, std::string Tipo, unsigned NIn){
+    delete ports[IdPort-1];
+    ports[IdPort-1] = allocPort(Tipo);
+    ports[IdPort-1]->setNumInputs(NIn);
 
 }
 void Circuito::setId_inPort(int IdPort, unsigned I, int IdOrig) const
 {
-
+    if(definedPort(IdPort) && validIdOrig(IdOrig)){
+        ports[IdPort-1]->setId_in(I, IdOrig);
+    }
 }
 
 
@@ -215,48 +220,91 @@ void Circuito::setId_inPort(int IdPort, unsigned I, int IdOrig) const
 /// E/S de dados
 /// ***********************
 
-void Circuito::digitar()
-{
-}
-bool Circuito::ler(const std::string& arq){
-    ifstream I(arq.c_str());
-        // O resultado logico da leitura
-        bool resultado=true;
-        try{
-            if (!I.is_open()) throw 1;
-            string ps;
-            int Nin,Nout,Nports;
+void Circuito::digitar(){
+    // essa parte sai na interface
+    int Nin, Nout, Nports;
+    do{
+        cout<<"Digite os dados a seguir:";
+        cout << "Entradas do circuito: ";
+        cin >> Nin;
+        cout << "Saidas do circuito: ";
+        cin >> Nout;
+        cout << "Portas no circuito: ";
+        cin >> Nports;
+    }
+    while(Nin<=0 || Nout<=0 || Nports<=0);
+    // -------------------------
+    clear();
+    resize(Nin, Nout, Nports);
+    string portaTipo;
+    unsigned totalPortas=0;
+    do{
+        // aqui retorna um erro para a interface e não repete
+        do{
+            cout << "Informe o tipo da porta " << totalPortas+1 << ": ";
+            cin >> portaTipo;
+        }while(!validType(portaTipo));
 
-            I >> ps >> Nin>> Nout >> Nports;
-            if (!I.good() || ps!="CIRCUITO") throw 2;
-            //clear();
-            //resize(Nin,Nout,Nports);
-            I >> ps;
-            if(ps!="PORTAS") throw 3;
+        ports[totalPortas] = allocPort(portaTipo);
+        //ports[totalPortas] = (&pont) -> clone();
+        ports[totalPortas]->digitar();
+        totalPortas++;
+    }while((int)totalPortas < Nports);
+    int posIdOut, contador=0;
+    do{
+        cout << "Digite o id da saida "  << contador+1 << ": ";
+        cin >> posIdOut;
 
-            for (int i=0; i<Nports; i++){
-               I>>ps; // lê id 1) antes do nome da porta
-               if(ps!=to_string(i)+")") throw 4;
-               I >> ps; // lê o tipo d porta
-               if(!validType(ps)) throw 5;
-
-               ptr_Port new_port = allocPort(ps);
-               if (!new_port->ler(I)) throw 5;
-    //           for(int j=0; j<new_port->getNumInputs(); j++){
-    //               if(!validIdInput(new_port->getId_in(j))) throw 4;
-    //           }
-
-            }
-            I >> ps;
-            if(ps!="SAIDAS") throw 3;
-            for (int i=0; i<Nout; i++){
-                I>>ps; // lê id 1) antes do nome da porta
-            if(ps!=to_string(i)+")") throw 4;
+        if(!validIdOrig(posIdOut)){
+            while(!validIdOrig(posIdOut)){
+               cout << "Id invalido, digite novamente: ";
+               cin >> posIdOut;
             }
         }
-        catch (int i)
-         {
-           //clear();
+        id_out[contador] = posIdOut;
+        contador++;
+
+      }while(contador < Nout);
+
+}
+
+
+bool Circuito::ler(const std::string& arq){
+    ifstream I(arq.c_str());
+    bool resultado=true;
+    try{
+         if (!I.is_open()) throw 1;
+         string ps;
+         int Nin,Nout,Nports;
+         I >> ps >> Nin>> Nout >> Nports;
+         if (!I.good() || ps!="CIRCUITO"|| Nin<=0 || Nout<=0 || Nports<=0) throw 2;
+         clear();
+         resize(Nin,Nout,Nports);
+         I >> ps;
+         if(ps!="PORTAS") throw 3;
+
+         for (int i=0; i<Nports; i++){
+            I>>ps; // lê id 1) antes do nome da porta
+            if(ps!=to_string(i)+")") throw 4;
+            I >> ps; // lê o tipo d porta
+            if(!validType(ps)) throw 5;
+            ports[i] = allocPort(ps);
+            if (!ports[i]->ler(I)) throw 6;
+         }
+         //saidas
+         I >> ps;
+         if(ps!="SAIDAS") throw 7;
+         for (int i=0; i<Nout; i++){
+            I>>ps; // lê id 1) antes do nome da porta
+            if(ps!=to_string(i)+")") throw 8;
+            I>>ps; //lê o id de saida
+            if(!validIdOrig(stoi(ps))) throw 9;
+            id_out[i]=stoi(ps);
+         }
+        }
+        catch (int i){
+           cout<<"Arquivo de leitura Invalido";
+           clear();
            resultado = false;
          }
          if (I.is_open()) I.close();
@@ -275,35 +323,27 @@ std::ostream& Circuito::imprimir(std::ostream& arq) const
     arq<<"CIRCUITO"<<" "<<out_circ.size()<<" "<<id_out.size()<<" "<<ports.size()<<'\n'<<"PORTAS";
     for (unsigned i = 0; i < ports.size(); i++)
     {
-
         arq<<i<<')';
         ports[i]->imprimir(arq);
     }
     arq<<'\n'<<"SAIDAS";
     for(unsigned i=0;i<id_out.size();i++)
     {
-
         arq<<i<<')'<<" "<<id_out[i];
     }
 
     return arq;
 }
+
 bool Circuito::salvar(const std::string& arq) const
 {
-    if(!valid())
-    {
-        return false;
-    }
+   if(!valid()) return false;
    ofstream arq1(arq);
-    if (arq1.is_open())
-    {
-        imprimir(arq1);
-        arq1.close();
-        return true;
-    }
-    return false;
+   if (!arq1.is_open()) return false;
+   imprimir(arq1);
+   arq1.close();
+   return true;
 }
-
 
 /// ***********************
 /// SIMULACAO (funcao principal do circuito)
