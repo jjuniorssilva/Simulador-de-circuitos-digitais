@@ -205,7 +205,7 @@ public:
   // Em seguida, o usuario digita as ids de todas as saidas, que sao conferidas (validIdOrig).
   // Se o usuario digitar um dado invalido, o metodo deve pedir que ele digite novamente
   // Deve utilizar o metodo digitar da classe Port
-  void digitar();
+  void digitar(int Nin, int Nout, int Nports);
 
   // Entrada dos dados de um circuito via arquivo
   // Leh do arquivo o cabecalho com o numero de entradas, saidas e portas

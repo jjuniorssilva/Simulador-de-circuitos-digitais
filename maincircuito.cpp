@@ -89,12 +89,16 @@ void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInputsPort,
                                       int IdInput0, int IdInput1, int IdInput2, int IdInput3)
 {
-  //ok com duvidas - sem teste
-
-  if( !(C.validIdInput(IdInput0) && C.validIdInput(IdInput1) && C.validIdInput(IdInput2) && C.validIdInput(IdInput3) && C.validIdPort(IdPort))){
-         QMessageBox::critical(this, tr("Porta inválida"),  "Não foi possivel modificar a porta");
+    try{
+         if(NumInputsPort >0 && !(C.validIdInput(IdInput0))) throw IdInput2;
+         if(NumInputsPort >1 && !(C.validIdInput(IdInput1))) throw 2;
+         if(NumInputsPort >2 && !(C.validIdInput(IdInput2))) throw 3;
+         if(NumInputsPort >3 && !(C.validIdInput(IdInput3))) throw 4;
+         if(!(C.validIdPort(IdPort))) throw 5;
+    }catch (int i){
+         QMessageBox::critical(this, tr("Porta invalida"),  "Não foi possivel modificar a porta: erro("+QString::number(i)+")");
          return;
-  }
+    }
   // Aqui deve ser chamado um metodo da classe Circuito que altere a porta cuja
   // id eh IdPort para que ela assuma as caracteristicas especificadas por
   // TipoPort, NumInputsPort
@@ -157,7 +161,7 @@ void MainCircuito::redimensionaTabelas()
   ui->tablePortas->clearContents();
 
   ui->tablePortas->setRowCount(numPorts);
-  for (i=0; i<numPorts; i++)
+  for (i=0; i<=numPorts; i++)
   {
     showPort(i);
   }
@@ -170,7 +174,7 @@ void MainCircuito::redimensionaTabelas()
   ui->tableSaidas->clearContents();
 
   ui->tableSaidas->setRowCount(numOutputs);
-  for (i=0; i<numOutputs; i++)
+  for (i=0; i<=numOutputs; i++)
   {
     showOutput(i);
   }
@@ -257,12 +261,12 @@ void MainCircuito::showPort(unsigned i)
   // Coluna 0
   prov = new QLabel(namePort);
   prov->setAlignment(Qt::AlignCenter);
-  ui->tablePortas->setCellWidget(i,0,prov);
+  ui->tablePortas->setCellWidget(i-1,0,prov);
   // Coluna 1
   prov = new QLabel;
   prov->setAlignment(Qt::AlignCenter);
   prov->setNum(numInputsPort);
-  ui->tablePortas->setCellWidget(i,1,prov);
+  ui->tablePortas->setCellWidget(i-1,1,prov);
 
   // As entradas de cada porta
   for (j=0; j<4; j++)
@@ -272,7 +276,7 @@ void MainCircuito::showPort(unsigned i)
     prov = new QLabel;
     prov->setAlignment(Qt::AlignCenter);
     if (j<numInputsPort) prov->setNum(idInputPort[j]);
-    ui->tablePortas->setCellWidget(i,2+j,prov);
+    ui->tablePortas->setCellWidget(i-1,2+j,prov);
   }
 }
 
@@ -297,7 +301,7 @@ void MainCircuito::showOutput(unsigned i)
   prov = new QLabel;
   prov->setAlignment(Qt::AlignCenter);
   prov->setNum(idOutput);
-  ui->tableSaidas->setCellWidget(i,0,prov);
+  ui->tableSaidas->setCellWidget(i-1,0,prov);
 }
 
 // Limpa a tabela verdade
