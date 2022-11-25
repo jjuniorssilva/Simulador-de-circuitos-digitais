@@ -57,10 +57,24 @@ Circuito::~Circuito()
 }
 Circuito::Circuito(const Circuito& C)
 {
+    Nin = C.Nin;
+    id_out = C.id_out;
+    out_circ = C.out_circ;
+
+    for(unsigned i=0; i<C.getNumPorts(); i++) {
+        ports.push_back(C.ports[i]->clone());
+    }
+}
+
+void Circuit::operator=(const Circuit& C)
+{
+    for(unsigned i=0; i<ports.size(); i++)if (ports[i]!=nullptr) delete ports[i];
+    for (unsigned i = 0; i < C.getNumPorts(); i++) ports.push_back(C.ports[i] ->clone());
+    for ( unsigned i = 0; i < C.getNumOutputs(); i++)id_out.push_back(C.id_out[i]);
+    for (unsigned i = 0; i < C.getNumInputs(); i++) out_circ.push_back(C.out_circ[i]);
 
 }
 
-//Circuito::Circuito(Circuito&& C){}
 void Circuito::clear()
 {
        id_out.clear();
@@ -121,14 +135,11 @@ bool Circuito::definedPort(int IdPort) const
 
 // Retorna true se IdPort eh uma porta existente (definedPort) e
 // todas as entradas da porta com Id de origem valida (usa getId_inPort e validIdOrig)
-bool Circuito::validPort(int IdPort) const
-{
+bool Circuito::validPort(int IdPort) const{
     if (!definedPort(IdPort)) return false;
-    for (int j=0; j<getNumInputsPort(IdPort); j++)
-    {
+    for (int j=0; j<getNumInputsPort(IdPort); j++){
         if (!validIdOrig(getId_inPort(IdPort,j))) return false;
     }
-
 }
 
 // Retorna true se o circuito eh valido (estah com todos os dados corretos):
@@ -250,7 +261,6 @@ void Circuito::setId_inPort(int IdPort, unsigned I, int IdOrig) const
         ports[IdPort-1]->setId_in(I, IdOrig);
     }
 }
-
 
 /// ***********************
 /// E/S de dados
