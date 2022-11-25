@@ -256,7 +256,7 @@ void Circuito::setIdOutput(int IdOut, int IdOrig)
 }
 void Circuito::setPort(int IdPort, std::string Tipo, unsigned NIn)
 {
-    if(!definedPort(IdPort) && !validPort(IdPort))
+    if(!validIdPort(IdPort) && !validType(Tipo) && !validIdInput(NIn))
     {
         return;
     }
@@ -277,61 +277,61 @@ void Circuito::setId_inPort(int IdPort, unsigned I, int IdOrig) const
 /// E/S de dados
 /// ***********************
 
-void Circuito::digitar(int Nin, int Nout, int Nports)
+void Circuito::digitar()
 {
     // essa parte sai na interface
-//    int Nin, Nout, Nports;
-//    do
-//    {
-//        cout<<"Digite os dados a seguir:";
-//        cout << "Entradas do circuito: ";
-//        cin >> Nin;
-//        cout << "Saidas do circuito: ";
-//        cin >> Nout;
-//        cout << "Portas no circuito: ";
-//        cin >> Nports;
-//    }
-//    while(Nin<=0 || Nout<=0 || Nports<=0);
+    int Nin, Nout, Nports;
+    do
+    {
+        cout<<"Digite os dados a seguir:";
+        cout << "Entradas do circuito: ";
+        cin >> Nin;
+        cout << "Saidas do circuito: ";
+        cin >> Nout;
+        cout << "Portas no circuito: ";
+        cin >> Nports;
+    }
+    while(Nin<=0 || Nout<=0 || Nports<=0);
     // -------------------------
     clear();
     resize(Nin, Nout, Nports);
-//    string portaTipo;
-//    unsigned totalPortas=0;
-//    do
-//    {
-//        // aqui retorna um erro para a interface e não repete
-//        do
-//        {
-//            cout << "Informe o tipo da porta " << totalPortas+1 << ": ";
-//            cin >> portaTipo;
-//        }
-//        while(!validType(portaTipo));
+    string portaTipo;
+    unsigned totalPortas=0;
+    do
+    {
+        // aqui retorna um erro para a interface e não repete
+        do
+        {
+            cout << "Informe o tipo da porta " << totalPortas+1 << ": ";
+            cin >> portaTipo;
+        }
+        while(!validType(portaTipo));
 
-//        ports[totalPortas] = allocPort(portaTipo);
-//        //ports[totalPortas] = (&pont) -> clone();
-//        ports[totalPortas]->digitar();
-//        totalPortas++;
-//    }
-//    while((int)totalPortas < Nports);
-//    int posIdOut, contador=0;
-//    do
-//    {
-//        cout << "Digite o id da saida "  << contador+1 << ": ";
-//        cin >> posIdOut;
+        ports[totalPortas] = allocPort(portaTipo);
+        //ports[totalPortas] = (&pont) -> clone();
+        ports[totalPortas]->digitar();
+        totalPortas++;
+    }
+    while((int)totalPortas < Nports);
+    int posIdOut, contador=0;
+    do
+    {
+        cout << "Digite o id da saida "  << contador+1 << ": ";
+        cin >> posIdOut;
 
-//        if(!validIdOrig(posIdOut))
-//        {
-//            while(!validIdOrig(posIdOut))
-//            {
-//                cout << "Id invalido, digite novamente: ";
-//                cin >> posIdOut;
-//            }
-//        }
-//        id_out[contador] = posIdOut;
-//        contador++;
+        if(!validIdOrig(posIdOut))
+        {
+            while(!validIdOrig(posIdOut))
+            {
+                cout << "Id invalido, digite novamente: ";
+                cin >> posIdOut;
+            }
+        }
+        id_out[contador] = posIdOut;
+        contador++;
 
-//    }
-//    while(contador < Nout);
+    }
+    while(contador < Nout);
 }
 bool Circuito::ler(const std::string& arq)
 {
