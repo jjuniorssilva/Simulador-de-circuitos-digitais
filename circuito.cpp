@@ -63,10 +63,22 @@ Circuito::Circuito(const Circuito& C)
 //Circuito::Circuito(Circuito&& C){}
 void Circuito::clear()
 {
-
+       id_out.clear();
+       out_circ.clear();
+       Nin = 0;
+       for(unsigned i=0; i<ports.size(); i++){
+           if (ports[i]!=nullptr) delete ports[i];
+       }
+       ports.clear();
 }
-
-//falta_fazer();
+void Circuito::resize(unsigned NI, unsigned NO, unsigned NP){
+    if(NI<=0 && NO<=0 && NP<=0) return;
+    clear();
+    Nin = NI;
+    id_out.resize(NO);
+    out_circ.resize(NO, bool3S::UNDEF);
+    ports.resize(NP, nullptr);
+}
 
 /// ***********************
 /// Funcoes de testagem
