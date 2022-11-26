@@ -89,16 +89,6 @@ void MainCircuito::slotNewCircuito(int NInputs, int NOutputs, int NPortas)
 void MainCircuito::slotModificarPorta(int IdPort, QString TipoPort, int NumInputsPort,
                                       int IdInput0, int IdInput1, int IdInput2, int IdInput3)
 {
-    try{
-         if(NumInputsPort >0 && !(C.validIdInput(IdInput0))) throw IdInput2;
-         if(NumInputsPort >1 && !(C.validIdInput(IdInput1))) throw 2;
-         if(NumInputsPort >2 && !(C.validIdInput(IdInput2))) throw 3;
-         if(NumInputsPort >3 && !(C.validIdInput(IdInput3))) throw 4;
-         if(!(C.validIdPort(IdPort))) throw 5;
-    }catch (int i){
-         QMessageBox::critical(this, tr("Porta invalida"),  "Não foi possivel modificar a porta: erro("+QString::number(i)+")");
-         return;
-    }
   // Aqui deve ser chamado um metodo da classe Circuito que altere a porta cuja
   // id eh IdPort para que ela assuma as caracteristicas especificadas por
   // TipoPort, NumInputsPort
